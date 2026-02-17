@@ -1,7 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
-const capVariants = {
+import { motion, Variants } from "framer-motion"
+const capVariants : Variants = {
   closed: { y: -50 },
   open: {
     y: -160,
@@ -9,7 +9,7 @@ const capVariants = {
   }
 }
 
-const bodyVariants = {
+const bodyVariants : Variants = {
   closed: { y: -160 },
   open: {
     y: 80,
@@ -17,7 +17,7 @@ const bodyVariants = {
   }
 }
 
-const sideBottleLeftPop = {
+const sideBottleLeftPop : Variants = {
   hidden: {
     opacity: 0,
     scale: 0.3,
@@ -34,7 +34,7 @@ const sideBottleLeftPop = {
   }
 }
 
-const sideBottleRightPop = {
+const sideBottleRightPop : Variants = {
   hidden: {
     opacity: 0,
     scale: 0.3,
