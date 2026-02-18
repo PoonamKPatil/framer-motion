@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useRef, useState } from "react"
 
 const capVariants: Variants = {
-  closed: { y: 80 },
+  closed: { y: 80, x: 5 },
   open: {
     y: -40,
     transition: { duration: 1.5, ease: "easeOut" }
