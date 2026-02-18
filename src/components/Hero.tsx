@@ -119,7 +119,7 @@ export default function Hero() {
         style={!lockBottle ? { y: bottleMoveDown } : {}}
         className={`
           left-1/2 -translate-x-1/2 z-50 pointer-events-none
-          ${lockBottle ? "absolute top-[90vh]" : "fixed top-32"}
+          ${lockBottle ? "absolute top-[80vh]" : "fixed top-32"}
         `}
       >
         {/* CAP */}
