@@ -1,32 +1,34 @@
 "use client"
 
-import { motion, Variants } from "framer-motion"
-const capVariants : Variants = {
-  closed: { y: -50 },
+import { motion, useMotionValueEvent, useScroll, useTransform, Variants } from "framer-motion"
+import Image from "next/image"
+import { useRef, useState } from "react"
+
+const capVariants: Variants = {
+  closed: { y: 80 },
   open: {
-    y: -160,
+    y: -40,
     transition: { duration: 1.5, ease: "easeOut" }
   }
 }
 
-const bodyVariants : Variants = {
-  closed: { y: -160 },
+const bodyVariants: Variants = {
+  closed: { y: 90 },
   open: {
-    y: 80,
+    y: 330,
     transition: { duration: 1.5, ease: "easeOut" }
   }
 }
-
-const sideBottleLeftPop : Variants = {
+const sideBottleLeftPop: Variants = {
   hidden: {
     opacity: 0,
     scale: 0.3,
-    rotate: -15,   // tilted left
+    rotate: -15,
   },
   show: {
     opacity: 1,
     scale: 1,
-    rotate: -15,   // stays tilted
+    rotate: -15,
     transition: {
       duration: 1.2,
       ease: "easeOut"
@@ -34,7 +36,7 @@ const sideBottleLeftPop : Variants = {
   }
 }
 
-const sideBottleRightPop : Variants = {
+const sideBottleRightPop: Variants = {
   hidden: {
     opacity: 0,
     scale: 0.3,
@@ -52,105 +54,215 @@ const sideBottleRightPop : Variants = {
 }
 
 export default function Hero() {
+  const containerRef = useRef(null)
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  })
+
+  // Cap closes on scroll
+  // const capScrollY = useTransform(
+  //   scrollYProgress,
+  //   [0.2, 0.5],
+  //   [0, 0],  // open → closed
+  //   { clamp: true }
+  // )
+
+  // // Body moves up on scroll
+  // const bodyScrollY = useTransform(
+  //   scrollYProgress,
+  //   [0.2, 0.5],
+  //   [0, 0],  // open → closed
+  //   { clamp: true }
+  // )
+
+  const capScrollY = useTransform(
+    scrollYProgress,
+    [0.35, 0.6],   // smoother & later
+    [-40, 80],     // open → closed
+    { clamp: true }
+  )
+  
+  const bodyScrollY = useTransform(
+    scrollYProgress,
+    [0.35, 0.6],
+    [330, 90],
+    { clamp: true }
+  )
+  
+
+  // Bottle moves to second section
+  const bottleMoveDown = useTransform(
+    scrollYProgress,
+    [0.5, 1],
+    [0, 400],
+    { clamp: true }
+  )
+
+  const [lockBottle, setLockBottle] = useState(false)
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setLockBottle(prev => {
+      if (latest > 0.6 && !prev) return true
+      return prev
+    })
+  })
+  
+
+
   return (
-    <section className="relative min-h-screen flex flex-col items-center 
-                    pt-20 sm:pt-24 md:pt-32 
-                    text-center overflow-hidden">
-      <motion.img
-        src="/images/bottle-cap.png"
-        className="absolute top-32 left-1/2 -translate-x-1/2 z-30 w-62"
-        variants={capVariants}
-        initial="closed"
-        animate="open"
-      />
-      <div className="absolute left-40 bottom-40">
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 0.8, opacity: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          className="w-48 h-48 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600"
-        />
+    <div ref={containerRef} className="relative">
 
+      {/* ================= FLOATING BOTTLE ================= */}
+      <motion.div
+        style={!lockBottle ? { y: bottleMoveDown } : {}}
+        className={`
+          left-1/2 -translate-x-1/2 z-50 pointer-events-none
+          ${lockBottle ? "absolute top-[90vh]" : "fixed top-32"}
+        `}
+      >
+        {/* CAP */}
         <motion.img
-          src="/images/borosil.png"
-          className="absolute inset-0 m-auto w-30"
-          variants={sideBottleLeftPop}
-          initial="hidden"
-          animate="show"
+          src="/images/bottle-cap.png"
+          className="absolute left-1/2 -translate-x-1/2 w-62 z-30"
+          variants={capVariants}
+          initial="closed"
+          animate="open"
+          style={{ y: capScrollY }}
         />
-      </div>
 
-      {/* Right Gradient Circle */}
-      <div className="absolute right-40 bottom-40">
-        {/* Gradient Circle */}
+        {/* BODY */}
+        <motion.img
+          src="/images/bottle-body.png"
+          className="relative w-100 z-20"
+          variants={bodyVariants}
+          initial="closed"
+          animate="open"
+          style={{ y: bodyScrollY }}
+        />
+      </motion.div>
+
+      {/* ================= HERO SECTION ================= */}
+      <section className="relative min-h-screen flex flex-col items-center 
+                          pt-20 sm:pt-24 md:pt-32 
+                          text-center overflow-hidden">
+        <div className="absolute left-40 bottom-40">
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 0.8, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="w-48 h-48 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600"
+          />
+
+          <motion.img
+            src="/images/borosil.png"
+            className="absolute inset-0 m-auto w-30"
+            variants={sideBottleLeftPop}
+            initial="hidden"
+            animate="show"
+          />
+        </div>
+        {/* Right Gradient Circle */}
+        <div className="absolute right-40 bottom-40">
+          {/* Gradient Circle */}
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 0.8, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="w-48 h-48 
+                      rounded-full 
+                      bg-gradient-to-r from-cyan-400 to-blue-600
+                      z-0"
+          />
+
+          {/* Bottle */}
+          <motion.img
+            src="/images/borosil.png"
+            className="absolute inset-0 m-auto w-30 z-10"
+            variants={sideBottleRightPop}
+            initial="hidden"
+            animate="show"
+          />
+
+        </div>
         <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 0.8, opacity: 1 }}
+          initial={{ scale: 0.5 }}
+          animate={{ scale: 0.8 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
-          className="w-48 h-48 
+          className="absolute top-0 left-1/2 -translate-x-1/2 z-0
+                    w-64 h-64 sm:w-80 sm:h-80 md:w-lg md:h-128
                     rounded-full 
-                    bg-gradient-to-r from-cyan-400 to-blue-600
-                    z-0"
-        />
+                    bg-gradient-to-r from-cyan-500 to-blue-500 p-1
+                    flex items-center justify-center"
+        >
+          <div className="w-full h-full rounded-full bg-white"></div>
+        </motion.div>
 
-        {/* Bottle */}
-        <motion.img
-          src="/images/borosil.png"
-          className="absolute inset-0 m-auto w-30 z-10"
-          variants={sideBottleRightPop}
-          initial="hidden"
-          animate="show"
-        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+          className="relative z-10 max-w-3xl px-6"
+        >
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+            The Ultimate Companion <br /> for Hydration
+          </h1>
 
-      </div>
+          <p className="mt-6 text-gray-700 text-sm sm:text-base">
+            We believe in the power of hydration.
+          </p>
 
-      {/* Circle */}
-      <motion.div
-        initial={{ scale: 0.5 }}
-        animate={{ scale: 0.8 }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute top-0 left-1/2 -translate-x-1/2 z-0
-               w-64 h-64 sm:w-80 sm:h-80 md:w-lg md:h-128
-               rounded-full 
-               bg-linear-to-r from-cyan-500 to-blue-500 p-1
-               flex items-center justify-center"
-      >
-        <div className="w-full h-full rounded-full bg-white"></div>
-      </motion.div>
+          <p className="text-gray-700 text-sm sm:text-base">
+            Our mission is simple yet vital.
+          </p>
 
-      {/* Content */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
-        className="relative z-10 max-w-3xl px-6"
-      >
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-          The Ultimate Companion <br /> for Hydration
-        </h1>
+          <button className="mt-8 bg-gradient-to-r from-cyan-500 to-blue-500 
+                            text-white px-6 py-3 rounded-full shadow-lg 
+                            hover:scale-105 transition">
+            Inquiry Now
+          </button>
+        </motion.div>
+      </section>
 
-        <p className="mt-6 text-gray-700 text-sm sm:text-base">
-          We believe in the power of hydration.
-        </p>
+      {/* ================= SECOND SECTION ================= */}
+      <section className="w-full">
+        <div className="grid md:grid-cols-2 min-h-[600px]">
 
-        <p className="text-gray-700 text-sm sm:text-base">
-          Our mission is simple yet vital.
-        </p>
+          <div className="bg-[#e6d7cd] flex items-center justify-center p-12">
+            <Image
+              src="/images/full-bottle.png"
+              alt="Bottle in hand"
+              width={400}
+              height={400}
+              className="object-contain"
+            />
+          </div>
 
-        <button className="mt-8 bg-linear-to-r from-cyan-500 to-blue-500 
-                       text-white px-6 py-3 rounded-full shadow-lg 
-                       hover:scale-105 transition">
-          Inquiry Now
-        </button>
-      </motion.div>
-      <motion.img
-        src="/images/bottle-body.png"
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 z-20 w-100"
-        variants={bodyVariants}
-        initial="closed"
-        animate="open"
-      />
+          <div className="bg-[#0f1f23] text-white flex items-center p-16">
+            <div className="space-y-8">
+              <FeatureItem text="Vacuum Bottles" />
+              <FeatureItem text="Fridge Bottles & Jugs" />
+              <FeatureItem text="Borosilicate Bottles" />
+              <FeatureItem text="Kettles" />
+            </div>
+          </div>
 
-    </section>
+        </div>
+      </section>
+
+    </div>
   )
 }
+
+function FeatureItem({ text }: { text: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+        <span className="text-lg">✔</span>
+      </div>
+      <p className="text-lg">{text}</p>
+    </div>
+  )
+}
+
