@@ -235,7 +235,7 @@ export default function Hero() {
               alt="Bottle in hand"
               width={400}
               height={400}
-              className="object-contain"
+              className="object-contain -rotate-12"
             />
           </div>
 
