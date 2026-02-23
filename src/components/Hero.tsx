@@ -3,9 +3,10 @@
 import { motion, useMotionValueEvent, useScroll, useTransform, Variants } from "framer-motion"
 import Image from "next/image"
 import { useRef, useState } from "react"
+import ProductFeatureSection from "./ProductFeatureSection"
 
 const capVariants: Variants = {
-  closed: { y: 80, x: 5 },
+  closed: { y: 80, x: 5.5 },
   open: {
     y: -40,
     transition: { duration: 1.5, ease: "easeOut" }
@@ -147,12 +148,13 @@ export default function Hero() {
       <section className="relative min-h-screen flex flex-col items-center 
                           pt-20 sm:pt-24 md:pt-32 
                           text-center overflow-hidden">
+        {/* Left Gradient Circle */}
         <div className="absolute left-40 bottom-40">
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 0.8, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            className="w-48 h-48 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600"
+            className="w-48 h-48 rounded-full bg-linear-to-r from-cyan-400 to-blue-600"
           />
 
           <motion.img
@@ -165,14 +167,13 @@ export default function Hero() {
         </div>
         {/* Right Gradient Circle */}
         <div className="absolute right-40 bottom-40">
-          {/* Gradient Circle */}
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 0.8, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
             className="w-48 h-48 
                       rounded-full 
-                      bg-gradient-to-r from-cyan-400 to-blue-600
+                      bg-linear-to-r from-cyan-400 to-blue-600
                       z-0"
           />
 
@@ -193,7 +194,7 @@ export default function Hero() {
           className="absolute top-0 left-1/2 -translate-x-1/2 z-0
                     w-64 h-64 sm:w-80 sm:h-80 md:w-lg md:h-128
                     rounded-full 
-                    bg-gradient-to-r from-cyan-500 to-blue-500 p-1
+                    bg-linear-to-r from-cyan-500 to-blue-500 p-1
                     flex items-center justify-center"
         >
           <div className="w-full h-full rounded-full bg-white"></div>
@@ -217,51 +218,13 @@ export default function Hero() {
             Our mission is simple yet vital.
           </p>
 
-          <button className="mt-8 bg-gradient-to-r from-cyan-500 to-blue-500 
+          <button className="mt-8 bg-linear-to-r from-cyan-500 to-blue-500 
                             text-white px-6 py-3 rounded-full shadow-lg 
                             hover:scale-105 transition">
             Inquiry Now
           </button>
         </motion.div>
       </section>
-
-      {/* ================= SECOND SECTION ================= */}
-      <section className="w-full">
-        <div className="grid md:grid-cols-2 min-h-[600px]">
-
-          <div className="bg-[#e6d7cd] flex items-center justify-center p-12">
-            <Image
-              src="/images/full-bottle.png"
-              alt="Bottle in hand"
-              width={400}
-              height={400}
-              className="object-contain -rotate-12"
-            />
-          </div>
-
-          <div className="bg-[#0f1f23] text-white flex items-center p-16">
-            <div className="space-y-8">
-              <FeatureItem text="Vacuum Bottles" />
-              <FeatureItem text="Fridge Bottles & Jugs" />
-              <FeatureItem text="Borosilicate Bottles" />
-              <FeatureItem text="Kettles" />
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-    </div>
-  )
-}
-
-function FeatureItem({ text }: { text: string }) {
-  return (
-    <div className="flex items-center gap-4">
-      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-        <span className="text-lg">✔</span>
-      </div>
-      <p className="text-lg">{text}</p>
     </div>
   )
 }

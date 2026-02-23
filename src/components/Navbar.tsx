@@ -17,7 +17,7 @@ export default function Navbar() {
           href="/products"
           className="mt-8 inline-block bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:scale-105 transition"
         >
-          Shop Now
+          Inquiry Now
         </Link>
 
       </nav>
