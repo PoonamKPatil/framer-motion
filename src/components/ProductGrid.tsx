@@ -67,12 +67,12 @@ export default function ProductGrid() {
               className="group"
             >
               {/* Image Card */}
-              <div className="relative w-full h-[320px] rounded-3xl overflow-hidden shadow-md">
+              <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-md bg-white">
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
-                  className="object-cover group-hover:scale-105 transition duration-500"
+                  className="object-contain group-hover:scale-105 transition duration-500 p-6"
                 />
               </div>
 
